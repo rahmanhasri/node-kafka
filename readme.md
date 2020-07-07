@@ -8,6 +8,7 @@ HOW TO USE
 3. API ready at localhost:3000
 4. Kafka ready to insert data with topic 'test'. Example producer in file ./kafka/producer.js.
 Notes: edit brokers value in ./kafka/connection.js from ```kafka:9092``` to ```localhost:9092``` or ```127.0.0.1:9092```
+Notes: accountNumber and identityNumber column in model-user are already indexed so query to those column are faster
 
 List: of basic routes:
 |Route|HTTP|Header(s)|Body|Description|

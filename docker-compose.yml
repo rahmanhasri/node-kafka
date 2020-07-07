@@ -15,9 +15,9 @@ services:
     restart: always
     networks:
       - my-network
-  api:
+  node:
     build: ./
-    container_name: "node-kafka"
+    container_name: "rahmanhasri"
     ports:
       - 3000:3000
     links:
