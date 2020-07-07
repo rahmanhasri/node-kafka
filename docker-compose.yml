@@ -1,0 +1,54 @@
+version: '2'
+services:
+  mongodb:
+    image: mongo:4.0.1
+    container_name: "mongodb-rs1"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/var/log/mongodb
+    volumes:
+      - "~/service-compose/mongo-data:/data/db"
+      - "./mongodb:/home"
+    ports:
+      - 27017:27017
+    command: mongod --noprealloc --smallfiles --oplogSize 16 --dbpath /data/db --noauth
+    restart: always
+    networks:
+      - my-network
+  api:
+    build: ./
+    container_name: "node-kafka"
+    ports:
+      - 3000:3000
+    links:
+      - mongodb
+      - kafka
+    networks:
+      - my-network
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - my-network
+  kafka:
+    image: wurstmeister/kafka:2.11-1.1.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+      KAFKA_CREATE_TOPICS: "topic-test:1:1"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - my-network
+networks:
+  my-network:
+    driver: bridge
